@@ -154,14 +154,14 @@ class LocalHomeViewModel: ObservableObject {
 
 // MARK: - Mock User for Compatibility
 
-struct User {
+private struct LocalUser {
     let id: String
     let name: String
     let email: String
     let createdAt: Date
     let progress: UserProgress
     
-    static let sampleUser = User(
+    static let sampleUser = LocalUser(
         id: "default-user",
         name: "Default User",
         email: "user@storysage.com",

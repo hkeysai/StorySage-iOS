@@ -54,9 +54,7 @@ struct ErrorView: View {
     }
     
     private var errorMessage: String {
-        if let networkError = error as? NetworkError {
-            return networkError.errorDescription ?? "Unknown network error"
-        } else if let urlError = error as? URLError {
+        if let urlError = error as? URLError {
             switch urlError.code {
             case .notConnectedToInternet:
                 return "Please check your internet connection and try again."
@@ -75,7 +73,7 @@ struct ErrorView: View {
 
 #Preview {
     ErrorView(
-        error: NetworkError.networkError(URLError(.notConnectedToInternet)),
+        error: URLError(.notConnectedToInternet),
         retryAction: {
             print("Retry tapped")
         }
