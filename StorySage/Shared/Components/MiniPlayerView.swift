@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct MiniPlayerView: View {
-    @EnvironmentObject var audioPlayer: AudioPlayer
+    @EnvironmentObject var audioPlayer: LocalAudioPlayer
     @EnvironmentObject var router: NavigationRouter
     @State private var isExpanded = false
     
@@ -224,7 +224,7 @@ struct MiniPlayerView: View {
         Spacer()
         MiniPlayerView()
             .environmentObject({
-                let player = AudioPlayer()
+                let player = LocalAudioPlayer()
                 Task {
                     await player.loadStory(Story.sampleStory)
                 }

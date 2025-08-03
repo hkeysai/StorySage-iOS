@@ -16,5 +16,5 @@ struct ContentView: View {
 #Preview {
     ContentView()
         .environmentObject(NavigationRouter())
-        .environmentObject(AudioPlayer())
+        .environmentObject(LocalAudioPlayer())
 }

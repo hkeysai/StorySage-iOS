@@ -47,10 +47,8 @@ struct Story: Codable, Identifiable, Hashable {
     }
     
     var isDownloaded: Bool {
-        // Check if audio file exists locally
-        guard let audioUrl = audioUrl else { return false }
-        let cacheManager = AudioCacheManager.shared
-        return cacheManager.isFileCached(url: audioUrl)
+        // In serverless mode, all audio is bundled
+        return true
     }
     
     var gradeLevelDisplayName: String {

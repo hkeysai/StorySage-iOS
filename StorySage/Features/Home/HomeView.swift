@@ -10,7 +10,7 @@ import SwiftUI
 struct HomeView: View {
     @StateObject private var viewModel = HomeViewModel()
     @EnvironmentObject var router: NavigationRouter
-    @EnvironmentObject var audioPlayer: AudioPlayer
+    @EnvironmentObject var audioPlayer: LocalAudioPlayer
     
     var body: some View {
         ScrollView {
@@ -296,6 +296,6 @@ struct GradeLevelCard: View {
     NavigationStack {
         HomeView()
             .environmentObject(NavigationRouter())
-            .environmentObject(AudioPlayer())
+            .environmentObject(LocalAudioPlayer())
     }
 }

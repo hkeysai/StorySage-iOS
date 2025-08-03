@@ -12,7 +12,7 @@ struct StoryDetailView: View {
     
     @StateObject private var viewModel: StoryDetailViewModel
     @EnvironmentObject var router: NavigationRouter
-    @EnvironmentObject var audioPlayer: AudioPlayer
+    @EnvironmentObject var audioPlayer: LocalAudioPlayer
     @State private var showingShareSheet = false
     
     init(story: Story) {
@@ -397,6 +397,6 @@ struct ShareSheet: UIViewControllerRepresentable {
     NavigationStack {
         StoryDetailView(story: Story.sampleStory)
             .environmentObject(NavigationRouter())
-            .environmentObject(AudioPlayer())
+            .environmentObject(LocalAudioPlayer())
     }
 }

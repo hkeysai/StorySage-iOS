@@ -12,7 +12,7 @@ struct StoryListView: View {
     
     @StateObject private var viewModel: StoryListViewModel
     @EnvironmentObject var router: NavigationRouter
-    @EnvironmentObject var audioPlayer: AudioPlayer
+    @EnvironmentObject var audioPlayer: LocalAudioPlayer
     
     init(category: Category) {
         self.category = category
@@ -253,6 +253,6 @@ struct FilterChip: View {
     NavigationStack {
         StoryListView(category: Category.sampleCategories[0])
             .environmentObject(NavigationRouter())
-            .environmentObject(AudioPlayer())
+            .environmentObject(LocalAudioPlayer())
     }
 }
