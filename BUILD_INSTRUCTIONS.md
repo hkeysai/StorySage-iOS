@@ -2,7 +2,7 @@
 
 ## Current Status
 
-The app has been converted to a fully serverless architecture with all content bundled in the app. All network dependencies have been removed.
+The app has been converted to a fully serverless architecture with all content bundled in the app. All network dependencies have been removed. The project file has been updated to include all necessary local implementation files.
 
 ## Build Steps
 
@@ -18,17 +18,20 @@ The app has been converted to a fully serverless architecture with all content b
    - Navigate to the Resources folder that's now in StorySage/Resources
    - Select the entire Resources folder
    - **IMPORTANT**: Choose "Create folder references" (NOT "Create groups")
-   - Make sure "Copy items if needed" is checked
+   - Make sure "Copy items if needed" is UNCHECKED (files are already there)
    - Add to target: StorySage
    - Click "Add"
 
-3. **Verify Resources**
-   - The Resources folder should appear as a blue folder in Xcode
-   - Expand it to verify Audio/ and Data/ subfolders are present
-   - Check Build Phases → Copy Bundle Resources to ensure all files are included
+3. **Verify Project Structure**
+   - All local implementation files should now be visible in Xcode:
+     - LocalAudioPlayer.swift in Core/Audio
+     - LocalDataProvider.swift in Core/Data
+     - All component files in Shared/Components
+   - The Resources folder should appear as a blue folder icon
 
 4. **Clean and Build**
    - Clean build folder: Product → Clean Build Folder (⇧⌘K)
+   - Delete derived data if needed: ~/Library/Developer/Xcode/DerivedData
    - Build: Product → Build (⌘B)
 
 ## What Was Changed
