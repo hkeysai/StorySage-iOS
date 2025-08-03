@@ -184,27 +184,7 @@ class LocalDataManager: ObservableObject {
     }
 }
 
-// MARK: - Local Data Error
-
-enum LocalDataError: Error, LocalizedError {
-    case dataNotLoaded
-    case loadingFailed(Error)
-    case storyNotFound(String)
-    case audioFileNotFound(String)
-    
-    var errorDescription: String? {
-        switch self {
-        case .dataNotLoaded:
-            return "Data has not been loaded yet"
-        case .loadingFailed(let error):
-            return "Failed to load bundled data: \(error.localizedDescription)"
-        case .storyNotFound(let id):
-            return "Story not found: \(id)"
-        case .audioFileNotFound(let fileName):
-            return "Audio file not found: \(fileName)"
-        }
-    }
-}
+// LocalDataError is defined in LocalDataProvider.swift
 
 // MARK: - Story Extension for Local Audio
 

@@ -27,7 +27,6 @@ class LocalHomeViewModel: ObservableObject {
     // MARK: - Private Properties
     
     private let localDataManager = LocalDataManager.shared
-    private let coreDataManager = CoreDataManager.shared
     private var cancellables = Set<AnyCancellable>()
     
     // MARK: - Computed Properties

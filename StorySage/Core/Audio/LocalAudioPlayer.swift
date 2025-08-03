@@ -425,10 +425,24 @@ class LocalAudioPlayer: NSObject, ObservableObject {
     }
 }
 
-// MARK: - Audio Error Extension
+// MARK: - Audio Error
 
-extension AudioError {
-    static func audioNotFound(_ fileName: String) -> AudioError {
-        return AudioError.invalidURL
+enum AudioError: Error, LocalizedError {
+    case invalidURL
+    case audioNotFound(String)
+    case playbackFailed(Error)
+    case fileNotFound
+    
+    var errorDescription: String? {
+        switch self {
+        case .invalidURL:
+            return "Invalid audio URL"
+        case .audioNotFound(let fileName):
+            return "Audio file not found: \(fileName)"
+        case .playbackFailed(let error):
+            return "Playback failed: \(error.localizedDescription)"
+        case .fileNotFound:
+            return "Audio file not found in bundle"
+        }
     }
 }
