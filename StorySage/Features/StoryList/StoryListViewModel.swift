@@ -22,7 +22,7 @@ class StoryListViewModel: ObservableObject {
     // MARK: - Private Properties
     
     private let category: Category
-    private let networkManager = NetworkManager.shared
+    private let dataProvider = LocalDataProvider.shared
     private var cancellables = Set<AnyCancellable>()
     
     // MARK: - Computed Properties
@@ -87,7 +87,7 @@ class StoryListViewModel: ObservableObject {
         error = nil
         
         do {
-            let allStories = try await networkManager.getStories(
+            let allStories = try await dataProvider.getStories(
                 categoryId: category.id,
                 gradeLevel: category.gradeLevel
             )

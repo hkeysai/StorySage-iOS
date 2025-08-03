@@ -1,15 +1,16 @@
-# StorySage iOS
+# StorySage iOS - Serverless Edition
 
-Educational storytelling app for children aged 3-9, featuring AI-generated audio stories with educational content.
+Self-contained educational storytelling app for children aged 3-9, with all audio stories bundled in the app.
 
 ## Features
 
-- 📚 Grade-level content (Pre-K through 2nd Grade)
-- 🎧 Professional audio narration with character voices
-- 📱 Offline playback with smart caching
+- 📚 Grade-level content (Pre-K through 2nd Grade) 
+- 🎧 20+ professional audio stories bundled in app
+- 📱 100% offline - no internet required
 - 🎯 Educational focus with key lessons
-- 🏃‍♂️ Progress tracking and achievements
+- 🏃‍♂️ Local progress tracking and achievements
 - 🎨 Beautiful, child-friendly UI
+- 🔒 Complete privacy - no data leaves device
 
 ## Requirements
 
@@ -30,9 +31,8 @@ cd StorySage-iOS
 open StorySage.xcodeproj
 ```
 
-3. Configure API endpoint:
-- Development: `http://localhost:5010` (default)
-- Production: Update in `NetworkManager.swift`
+3. Add Resources folder to Xcode project:
+- See `SERVERLESS_MIGRATION.md` for detailed instructions
 
 4. Build and run (⌘R)
 
@@ -68,14 +68,14 @@ StorySage/
 └── Assets.xcassets/      # Images and colors
 ```
 
-## API Integration
+## Serverless Architecture
 
-The app connects to the StorySage Flask API:
+The app is completely self-contained with:
 
-- Categories: `/api/categories`
-- Stories: `/api/stories`
-- Progress: `/api/progress/{userId}/{storyId}`
-- Health checks: `/api/health`
+- **Bundled Audio**: All MP3 files included in app bundle
+- **Local Data**: Stories and categories stored in JSON files
+- **Offline Progress**: User progress saved to UserDefaults
+- **No Server Dependencies**: Zero external API calls
 
 ## Development
 

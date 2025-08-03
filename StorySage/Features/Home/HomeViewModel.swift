@@ -34,7 +34,7 @@ class HomeViewModel: ObservableObject {
     
     // MARK: - Private Properties
     
-    private let networkManager = NetworkManager.shared
+    private let dataProvider = LocalDataProvider.shared
     private var cancellables = Set<AnyCancellable>()
     
     // MARK: - Computed Properties
@@ -106,22 +106,22 @@ class HomeViewModel: ObservableObject {
     // MARK: - Private Methods
     
     private func loadCategories() async throws -> [Category] {
-        return try await networkManager.getCategories()
+        return try await dataProvider.getCategories()
     }
     
     private func loadRecentStories() async throws -> [Story] {
-        return try await networkManager.getStories()
+        return try await dataProvider.getStories()
     }
     
     private func loadUserProgress() async throws -> UserProgress {
         // TODO: Get actual user ID from user defaults or authentication
-        let userId = "current-user"
-        return try await networkManager.getUserProgress(userId: userId)
+        let userId = DeviceIdManager.shared.deviceId
+        return try await dataProvider.getUserProgress(userId: userId)
     }
     
     private func loadFeaturedStoryForGrade(_ gradeLevel: GradeLevel) async {
         do {
-            let stories = try await networkManager.getStories(gradeLevel: gradeLevel.rawValue)
+            let stories = try await dataProvider.getStories(gradeLevel: gradeLevel.rawValue)
             featuredStory = stories.randomElement()
         } catch {
             print("Failed to load featured story for grade \(gradeLevel): \(error)")

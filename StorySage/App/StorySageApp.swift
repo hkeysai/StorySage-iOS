@@ -11,7 +11,7 @@ import AVFoundation
 @main
 struct StorySageApp: App {
     @StateObject private var router = NavigationRouter()
-    @StateObject private var audioPlayer = AudioPlayer()
+    @StateObject private var audioPlayer = LocalAudioPlayer()
     
     init() {
         setupAudioSession()
