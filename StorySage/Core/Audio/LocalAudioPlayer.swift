@@ -258,9 +258,10 @@ class LocalAudioPlayer: NSObject, ObservableObject {
             UserDefaults.standard.removeObject(forKey: "position_\(story.id)")
             
             // Show achievement notification
-            NotificationManager.shared.scheduleAchievementNotification(
+            await NotificationManager.shared.scheduleAchievementNotification(
                 title: "Story Completed! 🎉",
-                body: "Great job finishing \(story.title)!"
+                body: "Great job finishing \(story.title)!",
+                achievementId: "story_completed_\(story.id)"
             )
         } catch {
             print("Failed to save progress: \(error)")
