@@ -50,9 +50,10 @@ struct StorySageApp: App {
     private func setupAppearance() {
         // Navigation bar appearance
         let navAppearance = UINavigationBarAppearance()
-        navAppearance.configureWithTransparentBackground()
-        navAppearance.titleTextAttributes = [.foregroundColor: UIColor.white]
-        navAppearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
+        navAppearance.configureWithOpaqueBackground()
+        navAppearance.backgroundColor = UIColor.systemBackground
+        navAppearance.titleTextAttributes = [.foregroundColor: UIColor.label]
+        navAppearance.largeTitleTextAttributes = [.foregroundColor: UIColor.label]
         
         UINavigationBar.appearance().standardAppearance = navAppearance
         UINavigationBar.appearance().scrollEdgeAppearance = navAppearance
