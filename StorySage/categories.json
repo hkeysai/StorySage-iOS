@@ -1,0 +1,59 @@
+{
+  "categories": [
+    {
+      "id": "firefly-forest",
+      "name": "Firefly Forest",
+      "description": "Magical forest adventures with glowing friends",
+      "color": "#4CAF50",
+      "icon": "\u2728",
+      "gradeLevels": [
+        "grade_prek",
+        "grade_2"
+      ]
+    },
+    {
+      "id": "rainbow-rapids",
+      "name": "Rainbow Rapids",
+      "description": "Colorful water adventures and teamwork",
+      "color": "#2196F3",
+      "icon": "\ud83c\udf08",
+      "gradeLevels": [
+        "grade_prek",
+        "grade_2"
+      ]
+    },
+    {
+      "id": "thunder-mountain",
+      "name": "Thunder Mountain",
+      "description": "Brave mountain climbing and courage tales",
+      "color": "#FF5722",
+      "icon": "\u26f0\ufe0f",
+      "gradeLevels": [
+        "grade_prek",
+        "grade_2"
+      ]
+    },
+    {
+      "id": "starlight-meadow",
+      "name": "Starlight Meadow",
+      "description": "Peaceful meadow stories about kindness",
+      "color": "#9C27B0",
+      "icon": "\u2b50",
+      "gradeLevels": [
+        "grade_prek",
+        "grade_2"
+      ]
+    },
+    {
+      "id": "compass-cliff",
+      "name": "Compass Cliff",
+      "description": "Navigation adventures and responsibility",
+      "color": "#607D8B",
+      "icon": "\ud83e\udded",
+      "gradeLevels": [
+        "grade_prek",
+        "grade_2"
+      ]
+    }
+  ]
+}

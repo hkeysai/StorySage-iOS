@@ -26,6 +26,7 @@ class LocalDataManager: ObservableObject {
     
     private var stories: [Story] = []
     private var categories: [Category] = []
+    private var categoriesData: [LocalCategory] = [] // Store original data with grade levels
     private var storiesByCategory: [String: [Story]] = [:]
     private var storiesByGrade: [String: [Story]] = [:]
     
@@ -159,28 +160,89 @@ class LocalDataManager: ObservableObject {
     
     private func loadBundledData() {
         do {
+            // Try different paths for the JSON files
+            let possiblePaths = [
+                "",                 // Root bundle (where our script added them)
+                "Data",            // Data folder
+                "Resources/Data"   // Full path with Resources
+            ]
+            
+            var foundPath: String? = nil
+            
+            // Find which path contains the JSON files
+            for path in possiblePaths {
+                let subdirectory = path.isEmpty ? nil : path
+                if Bundle.main.url(forResource: "categories", withExtension: "json", subdirectory: subdirectory) != nil {
+                    foundPath = path
+                    print("Found JSON files in: '\(path.isEmpty ? "root bundle" : path)'")
+                    break
+                }
+            }
+            
+            let subdirectory = foundPath?.isEmpty ?? true ? nil : foundPath
+            
             // Load categories
-            if let categoriesURL = Bundle.main.url(forResource: "categories", withExtension: "json", subdirectory: "Data"),
+            if let categoriesURL = Bundle.main.url(forResource: "categories", withExtension: "json", subdirectory: subdirectory),
                let categoriesData = try? Data(contentsOf: categoriesURL) {
-                categories = try JSONDecoder().decode([Category].self, from: categoriesData)
+                let decoder = JSONDecoder()
+                if let categoriesFile = try? decoder.decode(CategoriesFile.self, from: categoriesData) {
+                    self.categoriesData = categoriesFile.categories
+                    // Create Category objects for all supported grade levels
+                    var allCategories: [Category] = []
+                    for localCat in categoriesFile.categories {
+                        for gradeLevel in localCat.gradeLevels {
+                            let cat = Category(
+                                id: localCat.id,
+                                name: localCat.name,
+                                description: localCat.description,
+                                icon: localCat.icon,
+                                color: localCat.color,
+                                gradeLevel: gradeLevel,
+                                storyCount: 0,
+                                isActive: true
+                            )
+                            allCategories.append(cat)
+                        }
+                    }
+                    categories = allCategories
+                    print("✅ Loaded \(categoriesFile.categories.count) categories expanded to \(categories.count) grade-specific entries")
+                } else {
+                    print("❌ Failed to decode categories.json")
+                }
+            } else {
+                print("❌ Could not find categories.json")
             }
             
             // Load stories
-            if let storiesURL = Bundle.main.url(forResource: "stories", withExtension: "json", subdirectory: "Data"),
+            if let storiesURL = Bundle.main.url(forResource: "stories", withExtension: "json", subdirectory: subdirectory),
                let storiesData = try? Data(contentsOf: storiesURL) {
-                stories = try JSONDecoder().decode([Story].self, from: storiesData)
-                
-                // Preload audio URLs
-                preloadAudioURLs()
-                
-                // Group stories for faster filtering
-                updateGroupedCollections()
+                let decoder = JSONDecoder()
+                if let storiesFile = try? decoder.decode(StoriesFile.self, from: storiesData) {
+                    stories = storiesFile.stories
+                    print("✅ Loaded \(stories.count) stories")
+                    
+                    // Preload audio URLs
+                    preloadAudioURLs()
+                    
+                    // Group stories for faster filtering
+                    updateGroupedCollections()
+                } else {
+                    print("❌ Failed to decode stories.json")
+                }
+            } else {
+                print("❌ Could not find stories.json")
             }
             
-            isDataLoaded = true
-            lastError = nil
+            isDataLoaded = !categories.isEmpty && !stories.isEmpty
+            lastError = isDataLoaded ? nil : LocalDataError.noData
+            
+            if !isDataLoaded {
+                print("⚠️ No data loaded, falling back to sample data")
+                loadSampleData()
+            }
             
         } catch {
+            print("❌ Error loading bundled data: \(error)")
             lastError = LocalDataError.loadingFailed(error)
             isDataLoaded = false
             
@@ -216,6 +278,43 @@ class LocalDataManager: ObservableObject {
 }
 
 // LocalDataError is defined in LocalDataProvider.swift
+
+// MARK: - JSON File Structures
+
+private struct CategoriesFile: Codable {
+    let categories: [LocalCategory]
+}
+
+private struct LocalCategory: Codable {
+    let id: String
+    let name: String
+    let description: String
+    let color: String
+    let icon: String
+    let gradeLevels: [String]
+    
+    func toCategory() -> Category {
+        // For now, create a category for each grade level it supports
+        // The view model will filter based on selected grade
+        // Using the first grade level as primary
+        let primaryGradeLevel = gradeLevels.first ?? "grade_prek"
+        
+        return Category(
+            id: id,
+            name: name,
+            description: description,
+            icon: icon,
+            color: color,
+            gradeLevel: primaryGradeLevel,
+            storyCount: 0, // Will be calculated later
+            isActive: true
+        )
+    }
+}
+
+private struct StoriesFile: Codable {
+    let stories: [Story]
+}
 
 // MARK: - Story Extension for Local Audio
 

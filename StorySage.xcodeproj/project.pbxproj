@@ -56,6 +56,9 @@
 		FB73DAA82E40352300E48998 /* rainbow-fish-school.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = FB73DA8D2E40352300E48998 /* rainbow-fish-school.mp3 */; };
 		FB73DAA92E40352300E48998 /* the-tiny-climber.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = FB73DA952E40352300E48998 /* the-tiny-climber.mp3 */; };
 		FB73DAAA2E40352300E48998 /* benny-big-feeling-day.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = FB73DA832E40352300E48998 /* benny-big-feeling-day.mp3 */; };
+		FB73DAAB2E40352300E48998 /* categories.json in Resources */ = {isa = PBXBuildFile; fileRef = FB73DA9B2E40352300E489928 /* categories.json */; };
+		FB73DAAB2E40352300E48999 /* metadata.json in Resources */ = {isa = PBXBuildFile; fileRef = FB73DA9B2E40352300E489929 /* metadata.json */; };
+		FB73DAAB2E40352300E489910 /* stories.json in Resources */ = {isa = PBXBuildFile; fileRef = FB73DA9B2E40352300E489930 /* stories.json */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -110,6 +113,9 @@
 		FB73DA942E40352300E48998 /* the-lost-firefly-prince.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "the-lost-firefly-prince.mp3"; sourceTree = "<group>"; };
 		FB73DA952E40352300E48998 /* the-tiny-climber.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "the-tiny-climber.mp3"; sourceTree = "<group>"; };
 		FB73DA962E40352300E48998 /* zoes-brave-voice.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "zoes-brave-voice.mp3"; sourceTree = "<group>"; };
+		FB73DA9B2E40352300E489928 /* categories.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = categories.json; sourceTree = "<group>"; };
+		FB73DA9B2E40352300E489929 /* metadata.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = metadata.json; sourceTree = "<group>"; };
+		FB73DA9B2E40352300E489930 /* stories.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = stories.json; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -162,6 +168,9 @@
 				FB73DA942E40352300E48998 /* the-lost-firefly-prince.mp3 */,
 				FB73DA952E40352300E48998 /* the-tiny-climber.mp3 */,
 				FB73DA962E40352300E48998 /* zoes-brave-voice.mp3 */,
+				FB73DA9B2E40352300E489928 /* categories.json */,
+				FB73DA9B2E40352300E489929 /* metadata.json */,
+				FB73DA9B2E40352300E489930 /* stories.json */,
 				3D0A3F2D2B5F123F000A1B2C /* App */,
 				3D0A3F5A2B5F1350000A1B2C /* Core */,
 				3D0A3F5B2B5F1355000A1B2C /* Features */,
@@ -403,6 +412,9 @@
 				FB73DAA82E40352300E48998 /* rainbow-fish-school.mp3 in Resources */,
 				FB73DAA92E40352300E48998 /* the-tiny-climber.mp3 in Resources */,
 				FB73DAAA2E40352300E48998 /* benny-big-feeling-day.mp3 in Resources */,
+				FB73DAAB2E40352300E48998 /* categories.json in Resources */,
+				FB73DAAB2E40352300E48999 /* metadata.json in Resources */,
+				FB73DAAB2E40352300E489910 /* stories.json in Resources */,
 				3D0A3F242B5F1235000A1B2C /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

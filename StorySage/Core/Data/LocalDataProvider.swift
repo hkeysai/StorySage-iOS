@@ -30,11 +30,12 @@ class LocalDataProvider: ObservableObject {
     // MARK: - Data Loading
     
     private func loadBundledData() {
+        // First, let's check what's in the bundle
+        if let resourcePath = Bundle.main.resourcePath {
+            print("Bundle resource path: \(resourcePath)")
+        }
+        
         do {
-            // First, let's check what's in the bundle
-            if let resourcePath = Bundle.main.resourcePath {
-                print("Bundle resource path: \(resourcePath)")
-            }
             
             // Try different paths for the resources
             let possiblePaths = [
@@ -56,13 +57,23 @@ class LocalDataProvider: ObservableObject {
             let subdirectory = foundPath ?? ""
             
             // Load categories
-            if let categoriesURL = Bundle.main.url(forResource: "categories", withExtension: "json", subdirectory: subdirectory),
-               let categoriesData = try? Data(contentsOf: categoriesURL) {
-                let categoriesResponse = try JSONDecoder().decode(CategoriesFile.self, from: categoriesData)
-                self.categories = categoriesResponse.categories.map { $0.toCategory() }
-                print("Loaded \(categories.count) categories from \(categoriesURL.path)")
+            if let categoriesURL = Bundle.main.url(forResource: "categories", withExtension: "json", subdirectory: subdirectory) {
+                print("Found categories.json at: \(categoriesURL.path)")
+                do {
+                    let categoriesData = try Data(contentsOf: categoriesURL)
+                    print("Loaded data, size: \(categoriesData.count) bytes")
+                    let categoriesResponse = try JSONDecoder().decode(CategoriesFile.self, from: categoriesData)
+                    self.categories = categoriesResponse.categories.map { $0.toCategory() }
+                    print("✅ Loaded \(categories.count) categories from \(categoriesURL.path)")
+                } catch {
+                    print("❌ Failed to decode categories.json: \(error)")
+                }
             } else {
-                print("❌ Failed to load categories.json from subdirectory: \(subdirectory)")
+                print("❌ Failed to find categories.json in subdirectory: \(subdirectory)")
+                // List all JSON files in bundle to debug
+                if let urls = Bundle.main.urls(forResourcesWithExtension: "json", subdirectory: nil) {
+                    print("JSON files in bundle: \(urls.map { $0.lastPathComponent })")
+                }
             }
             
             // Load stories
