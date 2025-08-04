@@ -16,7 +16,7 @@ struct Story: Codable, Identifiable, Hashable {
     let category: String
     let gradeLevel: String
     let duration: Int // in seconds
-    let audioUrl: String?
+    var audioUrl: String?
     let segments: [StorySegment]
     let tags: [String]
     let keyLessons: [String]

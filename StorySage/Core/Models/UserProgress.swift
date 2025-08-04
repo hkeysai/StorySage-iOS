@@ -94,15 +94,15 @@ enum PlaybackSpeed: String, Codable, CaseIterable {
 // MARK: - User Progress
 
 struct UserProgress: Codable {
-    let totalStoriesListened: Int
-    let totalListeningTime: Int // in seconds
-    let completedStories: [String] // story IDs
-    let favoriteStories: [String] // story IDs
-    let currentStreak: Int // days
-    let longestStreak: Int // days
-    let achievements: [Achievement]
-    let lastStoryId: String?
-    let lastPlaybackPosition: Int? // in seconds
+    var totalStoriesListened: Int
+    var totalListeningTime: Int // in seconds
+    var completedStories: [String] // story IDs
+    var favoriteStories: [String] // story IDs
+    var currentStreak: Int // days
+    var longestStreak: Int // days
+    var achievements: [Achievement]
+    var lastStoryId: String?
+    var lastPlaybackPosition: Int? // in seconds
     
     enum CodingKeys: String, CodingKey {
         case totalStoriesListened = "total_stories_listened"
