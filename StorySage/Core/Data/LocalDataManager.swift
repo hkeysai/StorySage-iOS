@@ -217,8 +217,9 @@ class LocalDataManager: ObservableObject {
             if let storiesURL = Bundle.main.url(forResource: "stories", withExtension: "json", subdirectory: subdirectory),
                let storiesData = try? Data(contentsOf: storiesURL) {
                 let decoder = JSONDecoder()
-                if let storiesFile = try? decoder.decode(StoriesFile.self, from: storiesData) {
-                    stories = storiesFile.stories
+                do {
+                    let storiesFile = try decoder.decode(StoriesFile.self, from: storiesData)
+                    stories = storiesFile.stories.map { $0.toStory() }
                     print("✅ Loaded \(stories.count) stories")
                     
                     // Preload audio URLs
@@ -226,8 +227,8 @@ class LocalDataManager: ObservableObject {
                     
                     // Group stories for faster filtering
                     updateGroupedCollections()
-                } else {
-                    print("❌ Failed to decode stories.json")
+                } catch {
+                    print("❌ Failed to decode stories.json: \(error)")
                 }
             } else {
                 print("❌ Could not find stories.json")
@@ -313,7 +314,37 @@ private struct LocalCategory: Codable {
 }
 
 private struct StoriesFile: Codable {
-    let stories: [Story]
+    let stories: [LocalStory]
+}
+
+private struct LocalStory: Codable {
+    let id: String
+    let title: String
+    let description: String
+    let category: String
+    let gradeLevel: String
+    let duration: Int
+    let audioFile: String
+    let keyLessons: [String]
+    let tags: [String]
+    
+    func toStory() -> Story {
+        return Story(
+            id: id,
+            title: title,
+            description: description,
+            category: category,
+            gradeLevel: gradeLevel,
+            duration: duration,
+            audioUrl: audioFile,
+            segments: [], // Empty for local stories
+            tags: tags,
+            keyLessons: keyLessons,
+            createdAt: Date().ISO8601Format(),
+            status: .published,
+            downloadUrl: nil
+        )
+    }
 }
 
 // MARK: - Story Extension for Local Audio

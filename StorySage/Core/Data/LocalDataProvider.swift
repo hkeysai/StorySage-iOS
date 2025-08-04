@@ -201,9 +201,18 @@ class LocalDataProvider: ObservableObject {
         }
         
         for audioFile in audioFiles {
-            if Bundle.main.url(forResource: audioFile.replacingOccurrences(of: ".mp3", with: ""), 
-                              withExtension: "mp3", 
-                              subdirectory: "Audio") == nil {
+            let fileName = audioFile.replacingOccurrences(of: ".mp3", with: "")
+            // Try different paths
+            let paths = [nil, "Audio", "Resources/Audio"]
+            var found = false
+            for path in paths {
+                if Bundle.main.url(forResource: fileName, withExtension: "mp3", subdirectory: path) != nil {
+                    found = true
+                    break
+                }
+            }
+            if !found {
+                print("❌ Audio file not found in bundle: \(audioFile)")
                 return false
             }
         }

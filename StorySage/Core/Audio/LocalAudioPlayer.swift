@@ -86,15 +86,35 @@ class LocalAudioPlayer: NSObject, ObservableObject {
         // Remove .mp3 extension if present for bundle lookup
         let resourceName = audioUrl.replacingOccurrences(of: ".mp3", with: "")
         
-        guard let bundleURL = Bundle.main.url(forResource: resourceName, withExtension: "mp3", subdirectory: "Audio") else {
+        // Try different possible paths
+        let possiblePaths = [nil, "Audio", "Resources/Audio"]
+        var bundleURL: URL? = nil
+        
+        for path in possiblePaths {
+            if let url = Bundle.main.url(forResource: resourceName, withExtension: "mp3", subdirectory: path) {
+                bundleURL = url
+                print("✅ Found audio file in path: \(path ?? "root bundle")")
+                break
+            }
+        }
+        
+        guard let audioURL = bundleURL else {
             error = .audioNotFound(audioUrl)
             isLoading = false
             print("❌ Audio file not found in bundle: \(audioUrl)")
+            
+            // List available MP3 files for debugging
+            if let urls = Bundle.main.urls(forResourcesWithExtension: "mp3", subdirectory: nil) {
+                print("📁 Available MP3 files in bundle: \(urls.count)")
+                for url in urls.prefix(5) {
+                    print("  - \(url.lastPathComponent)")
+                }
+            }
             return
         }
         
-        print("✅ Loading audio from bundle: \(bundleURL.lastPathComponent)")
-        await loadAudio(from: bundleURL)
+        print("✅ Loading audio from bundle: \(audioURL.lastPathComponent)")
+        await loadAudio(from: audioURL)
     }
     
     func play() {
