@@ -198,7 +198,7 @@ class LocalDataManager: ObservableObject {
                                 icon: localCat.icon,
                                 color: localCat.color,
                                 gradeLevel: gradeLevel,
-                                storyCount: 0,
+                                storyCount: 0, // Will be updated after loading stories
                                 isActive: true
                             )
                             allCategories.append(cat)
@@ -234,6 +234,11 @@ class LocalDataManager: ObservableObject {
                 print("❌ Could not find stories.json")
             }
             
+            // Update category story counts after loading stories
+            if !stories.isEmpty && !categories.isEmpty {
+                updateCategoryStoryCounts()
+            }
+            
             isDataLoaded = !categories.isEmpty && !stories.isEmpty
             lastError = isDataLoaded ? nil : LocalDataError.noData
             
@@ -258,6 +263,43 @@ class LocalDataManager: ObservableObject {
         
         // Group by grade level
         storiesByGrade = Dictionary(grouping: stories) { $0.gradeLevel }
+    }
+    
+    private func updateCategoryStoryCounts() {
+        // Create a dictionary to count stories per category and grade level
+        var storyCounts: [String: [String: Int]] = [:]
+        
+        // Count stories for each category and grade level combination
+        for story in stories {
+            if storyCounts[story.category] == nil {
+                storyCounts[story.category] = [:]
+            }
+            storyCounts[story.category]?[story.gradeLevel, default: 0] += 1
+        }
+        
+        // Update each category with its story count
+        for index in categories.indices {
+            let category = categories[index]
+            let categoryId = category.id
+            let gradeLevel = category.gradeLevel
+            
+            // Get the count for this specific category and grade level combination
+            let count = storyCounts[categoryId]?[gradeLevel] ?? 0
+            
+            // Create new category with updated count
+            categories[index] = Category(
+                id: category.id,
+                name: category.name,
+                description: category.description,
+                icon: category.icon,
+                color: category.color,
+                gradeLevel: category.gradeLevel,
+                storyCount: count,
+                isActive: category.isActive
+            )
+        }
+        
+        print("📊 Updated story counts for \(categories.count) categories")
     }
     
     private func loadSampleData() {
