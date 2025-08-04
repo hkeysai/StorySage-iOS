@@ -85,17 +85,47 @@ class LocalDataManager: ObservableObject {
     func getLocalAudioURL(for story: Story) -> URL? {
         // Try multiple approaches to find the audio file
         
-        // 1. If story has local_audio_file field
-        if let localFile = story.audioUrl {
-            let fileName = localFile.replacingOccurrences(of: ".mp3", with: "")
-            if let url = Bundle.main.url(forResource: fileName, withExtension: "mp3", subdirectory: "Audio") {
-                return url
+        // 1. If story has audioUrl field (even if it's a remote URL)
+        if let audioUrlString = story.audioUrl {
+            // Extract filename from URL (e.g., "benny-big-feeling-day" from "https://api.storysage.com/audio/benny-big-feeling-day.mp3")
+            let fileName: String
+            if audioUrlString.contains("http") {
+                // It's a URL, extract the filename
+                let components = audioUrlString.components(separatedBy: "/")
+                if let lastComponent = components.last {
+                    fileName = lastComponent.replacingOccurrences(of: ".mp3", with: "")
+                } else {
+                    fileName = audioUrlString.replacingOccurrences(of: ".mp3", with: "")
+                }
+            } else {
+                // It's already a filename
+                fileName = audioUrlString.replacingOccurrences(of: ".mp3", with: "")
             }
             
-            // Try without subdirectory
-            if let url = Bundle.main.url(forResource: fileName, withExtension: "mp3") {
-                return url
+            // Try different possible paths
+            let possiblePaths = [
+                "",                 // Root bundle first (where files were found)
+                "Audio",           // Just Audio folder
+                "Resources/Audio"  // Full path with Resources
+            ]
+            
+            for path in possiblePaths {
+                let subdirectory = path.isEmpty ? nil : path
+                if let url = Bundle.main.url(forResource: fileName, withExtension: "mp3", subdirectory: subdirectory) {
+                    print("✅ Found audio file: \(fileName).mp3 in path: '\(path.isEmpty ? "root" : path)'")
+                    return url
+                }
             }
+            
+            // List all mp3 files in bundle for debugging
+            if let urls = Bundle.main.urls(forResourcesWithExtension: "mp3", subdirectory: nil) {
+                print("📁 MP3 files in bundle root: \(urls.count)")
+                for url in urls.prefix(3) {
+                    print("  - \(url.lastPathComponent)")
+                }
+            }
+            
+            print("❌ Audio file not found in bundle: \(fileName).mp3")
         }
         
         // 2. Try using story ID as filename
@@ -108,6 +138,7 @@ class LocalDataManager: ObservableObject {
             return url
         }
         
+        print("❌ No audio file found for story: \(story.title) (id: \(story.id))")
         return nil
     }
     
@@ -204,6 +235,31 @@ extension Story {
         if let path = localAudioPath {
             return URL(fileURLWithPath: path)
         }
-        return LocalDataManager.shared.getLocalAudioURL(for: self)
+        
+        // Since we can't call MainActor methods from here, we'll check the bundle directly
+        // This duplicates some logic from getLocalAudioURL but avoids actor isolation issues
+        if let localFile = self.audioUrl {
+            let fileName = localFile.replacingOccurrences(of: ".mp3", with: "")
+            if let url = Bundle.main.url(forResource: fileName, withExtension: "mp3", subdirectory: "Audio") {
+                return url
+            }
+            
+            // Try without subdirectory
+            if let url = Bundle.main.url(forResource: fileName, withExtension: "mp3") {
+                return url
+            }
+        }
+        
+        // Try with story ID
+        if let url = Bundle.main.url(forResource: self.id, withExtension: "mp3", subdirectory: "Audio") {
+            return url
+        }
+        
+        // Try without subdirectory
+        if let url = Bundle.main.url(forResource: self.id, withExtension: "mp3") {
+            return url
+        }
+        
+        return nil
     }
 }

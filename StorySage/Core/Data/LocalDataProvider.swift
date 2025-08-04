@@ -31,22 +31,52 @@ class LocalDataProvider: ObservableObject {
     
     private func loadBundledData() {
         do {
+            // First, let's check what's in the bundle
+            if let resourcePath = Bundle.main.resourcePath {
+                print("Bundle resource path: \(resourcePath)")
+            }
+            
+            // Try different paths for the resources
+            let possiblePaths = [
+                "Resources/Data", // Full path with Resources
+                "Data",           // Just Data folder
+                ""                // Root bundle
+            ]
+            
+            var foundPath: String? = nil
+            
+            for path in possiblePaths {
+                if let testURL = Bundle.main.url(forResource: "categories", withExtension: "json", subdirectory: path) {
+                    foundPath = path
+                    print("Found resources in subdirectory: '\(path)'")
+                    break
+                }
+            }
+            
+            let subdirectory = foundPath ?? ""
+            
             // Load categories
-            if let categoriesURL = Bundle.main.url(forResource: "categories", withExtension: "json", subdirectory: "Data"),
+            if let categoriesURL = Bundle.main.url(forResource: "categories", withExtension: "json", subdirectory: subdirectory),
                let categoriesData = try? Data(contentsOf: categoriesURL) {
                 let categoriesResponse = try JSONDecoder().decode(CategoriesFile.self, from: categoriesData)
                 self.categories = categoriesResponse.categories.map { $0.toCategory() }
+                print("Loaded \(categories.count) categories from \(categoriesURL.path)")
+            } else {
+                print("❌ Failed to load categories.json from subdirectory: \(subdirectory)")
             }
             
             // Load stories
-            if let storiesURL = Bundle.main.url(forResource: "stories", withExtension: "json", subdirectory: "Data"),
+            if let storiesURL = Bundle.main.url(forResource: "stories", withExtension: "json", subdirectory: subdirectory),
                let storiesData = try? Data(contentsOf: storiesURL) {
                 let storiesResponse = try JSONDecoder().decode(StoriesFile.self, from: storiesData)
                 self.stories = storiesResponse.stories.map { $0.toStory() }
+                print("Loaded \(stories.count) stories from \(storiesURL.path)")
+            } else {
+                print("❌ Failed to load stories.json from subdirectory: \(subdirectory)")
             }
             
             // Load metadata
-            if let metadataURL = Bundle.main.url(forResource: "metadata", withExtension: "json", subdirectory: "Data"),
+            if let metadataURL = Bundle.main.url(forResource: "metadata", withExtension: "json", subdirectory: subdirectory),
                let metadataData = try? Data(contentsOf: metadataURL) {
                 self.metadata = try JSONDecoder().decode(AppMetadata.self, from: metadataData)
             }
@@ -109,7 +139,7 @@ class LocalDataProvider: ObservableObject {
             favoriteStories: UserDefaults.standard.stringArray(forKey: "favoriteStories") ?? [],
             currentStreak: UserDefaults.standard.integer(forKey: "currentStreak"),
             longestStreak: UserDefaults.standard.integer(forKey: "longestStreak"),
-            achievements: UserDefaults.standard.stringArray(forKey: "achievements") ?? [],
+            achievements: [], // For now, return empty array - implement proper achievement loading later
             lastStoryId: UserDefaults.standard.string(forKey: "lastStoryId"),
             lastPlaybackPosition: UserDefaults.standard.object(forKey: "lastPlaybackPosition") as? Int
         )
@@ -227,7 +257,8 @@ private struct LocalCategory: Codable {
             icon: icon,
             color: color,
             gradeLevel: gradeLevels.first ?? "grade_prek", // Default to pre-k
-            storyCount: 0 // Will be calculated dynamically
+            storyCount: 0, // Will be calculated dynamically
+            isActive: true // All categories are active by default
         )
     }
 }
@@ -245,6 +276,7 @@ private struct AppMetadata: Codable {
 
 enum LocalDataError: Error, LocalizedError {
     case noData
+    case dataNotLoaded
     case loadingFailed(Error)
     case storyNotFound(String)
     case audioNotFound(String)
@@ -253,6 +285,8 @@ enum LocalDataError: Error, LocalizedError {
         switch self {
         case .noData:
             return "No data available"
+        case .dataNotLoaded:
+            return "Data has not been loaded yet"
         case .loadingFailed(let error):
             return "Failed to load data: \(error.localizedDescription)"
         case .storyNotFound(let id):
